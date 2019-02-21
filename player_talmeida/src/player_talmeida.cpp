@@ -131,7 +131,7 @@ class MyPlayer : public Player // herda tudo da class player
         }
         else
         {
-            cout << "something wrong with team parametrization" << endl;
+            cout << "something wrong with team parametrization!!" << endl;
         }
         // team_red->printInfo();
         printInfo();
