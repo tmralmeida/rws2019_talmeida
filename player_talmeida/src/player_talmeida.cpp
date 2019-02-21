@@ -51,7 +51,7 @@ class Player
 
     // string team_name;
 
-    // methods
+    // constructor
     Player(string player_name_in) { player_name = player_name_in; }
 
     void setTeamName(string team_name_in)
@@ -63,7 +63,7 @@ class Player
         }
         else
         {
-            cout << "Cannot set team name" << team_name_in << endl;
+            cout << "Cannot set team name to " << team_name_in << endl;
         }
     }
     // overload:
@@ -151,16 +151,16 @@ class MyPlayer : public Player // herda tudo da class player
     {
         ROS_INFO("received a new msg");
     }
+
+  private:
 };
-
 } // namespace talmeida_ns
-
-int doSomething() { return 0; }
 
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "talmeida");
     ros::NodeHandle n;
+
     talmeida_ns::MyPlayer player("talmeida", "red");
     // Player player("talmeida");
     // player.setTeamName(0); // ou "red"
@@ -178,7 +178,8 @@ int main(int argc, char *argv[])
         // cout << "talmeida belongs to team?"
         //     << team_red.playerBelongsToTeam("talmeida") << endl;
         ros::Duration(1).sleep();
+        player.printInfo();
         ros::spinOnce();
     }
-    return 0;
+    return 1;
 }
