@@ -1,6 +1,7 @@
 #include <boost/shared_ptr.hpp>
 #include <iostream>
 #include <ros/ros.h>
+#include <rws2019_msgs/MakeAPlay.h>
 #include <vector>
 
 using namespace std; // ja na e preciso usar o std
@@ -146,6 +147,10 @@ class MyPlayer : public Player // herda tudo da class player
                                         << " and fleeing from "
                                         << team_hunters->team_name);
     }
+    void makeAPlayCallback(rws2019_msgs::MakeAPlayConstPtr msg)
+    {
+        ROS_INFO("received a new msg");
+    }
 };
 
 } // namespace talmeida_ns
@@ -164,7 +169,8 @@ int main(int argc, char *argv[])
     // talmeida_ns::Team team_red("red");
     // team_red.player_names.push_back("talmeida"); // acrescenat elementos a
     // equipa
-
+    ros::Subscriber sub = n.subscribe(
+        "/make_a_play", 100, &talmeida_ns::MyPlayer::makeAPlayCallback, &player);
     while (ros::ok())
     {
         // team_red.printInfo();
@@ -172,6 +178,7 @@ int main(int argc, char *argv[])
         // cout << "talmeida belongs to team?"
         //     << team_red.playerBelongsToTeam("talmeida") << endl;
         ros::Duration(1).sleep();
+        ros::spinOnce();
     }
     return 0;
 }
