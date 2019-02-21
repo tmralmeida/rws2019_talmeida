@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!-- -->
+<launch>
+    <rosparam command="load" file="$(find player_talmeida)/param/params.yaml"/>
+    <node pkg="player_talmeida" type="node" name="talmeida" respawn="true" output="screen"/>
+
+</launch>
