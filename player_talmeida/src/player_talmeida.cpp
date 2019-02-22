@@ -196,8 +196,32 @@ public:
     }
 
     // STEP 2: define where I want to move
-    float dx = 0.1;
-    float angle = M_PI / 16;
+    vector<float> distance_to_preys;
+    vector<float> angle_to_preys;
+
+    // For each prey find the closest.Then follow it
+    for (size_t i = 0; i < team_preys->player_names.size(); i++)
+    {
+      ROS_WARN_STREAM("team_preys = " << team_preys->player_names[i]);
+
+      std::tuple<float, float> t = getDistanceAndAngleToPlayer(team_preys->player_names[i]);
+      distance_to_preys.push_back(std::get<0>(t));
+      angle_to_preys.push_back(std::get<1>(t));
+    }
+
+    int idx_closest_prey = 0;
+    float distance_closest_prey = 1000;
+    for (size_t i = 0; i < distance_to_preys.size(); i++)
+    {
+      if (distance_to_preys[i] < distance_closest_prey)
+      {
+        idx_closest_prey = i;
+        distance_closest_prey = distance_to_preys[i];
+      }
+    }
+
+    float dx = 10;
+    float angle = angle_to_preys[idx_closest_prey];
 
     // STEP 2.5: check values
     float dx_max = msg->cheetah;
@@ -243,21 +267,29 @@ public:
     vis_pub->publish(marker);
   }
 
-//   double getDistanceToPlayer(string other_player)
-//   {
-//     tf::StampedTransform T;
-//     try
-//     {
-//       listener.lookupTransform("/world", player_name, ros::Time(0), T);  // ros::time(0)-extrapolacao
-//     }
-//     catch (tf::TransformException ex)
-//     {
-//       ROS_ERROR("%s", ex.what());
-//       ros::Duration(0.1).sleep();
-//     }
-  //}
+  tuple<float, float> getDistanceToArenaCenter(string other_player)
+  {
+    return getDistanceAndAngleToPlayer("world");
+  }
 
-//private:
+  tuple<float, float> getDistanceAndAngleToPlayer(string other_player)
+  {
+    tf::StampedTransform T;
+    try
+    {
+      listener.lookupTransform(player_name, other_player, ros::Time(0), T);
+    }
+    catch (tf::TransformException ex)
+    {
+      ROS_ERROR("%s", ex.what());
+      return { 1000, 0.0 };
+    }
+    float distance = sqrt(T.getOrigin().y() * T.getOrigin().y() + T.getOrigin().x() * T.getOrigin().x());
+    float angle = atan2(T.getOrigin().y(), T.getOrigin().x());
+    return { distance, angle };
+  }
+
+private:
 };
 }  // namespace talmeida_ns
 
