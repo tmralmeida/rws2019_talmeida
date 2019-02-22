@@ -2,6 +2,7 @@
 #include <iostream>
 #include <ros/ros.h>
 #include <rws2019_msgs/MakeAPlay.h>
+#include <tf/transform_broadcaster.h>
 #include <vector>
 
 using namespace std; // ja na e preciso usar o std
@@ -100,6 +101,8 @@ class MyPlayer : public Player // herda tudo da class player
     boost::shared_ptr<Team> team_hunters;
     boost::shared_ptr<Team> team_mine;
     boost::shared_ptr<Team> team_preys;
+    tf::TransformBroadcaster br;
+    tf::Transform transform;
 
     MyPlayer(string player_name_in, string team_name_in)
         : Player(player_name_in) // construtor da class
@@ -150,6 +153,13 @@ class MyPlayer : public Player // herda tudo da class player
     void makeAPlayCallback(rws2019_msgs::MakeAPlayConstPtr msg)
     {
         ROS_INFO("received a new msg");
+        //publicar uma transformacao:
+        tf::Transform transform1;
+        transform1.setOrigin(tf::Vector3(-1,3, 0.0));
+        tf::Quaternion q;
+        q.setRPY(0, 0, 0);
+        transform1.setRotation(q);
+        br.sendTransform(tf::StampedTransform(transform1 ros::Time::now(), "world", player_name));
     }
 
   private:
