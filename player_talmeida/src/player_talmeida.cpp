@@ -243,6 +243,20 @@ public:
     vis_pub->publish(marker);
   }
 
+//   double getDistanceToPlayer(string other_player)
+//   {
+//     tf::StampedTransform T;
+//     try
+//     {
+//       listener.lookupTransform("/world", player_name, ros::Time(0), T);  // ros::time(0)-extrapolacao
+//     }
+//     catch (tf::TransformException ex)
+//     {
+//       ROS_ERROR("%s", ex.what());
+//       ros::Duration(0.1).sleep();
+//     }
+  }
+
 private:
 };
 }  // namespace talmeida_ns
