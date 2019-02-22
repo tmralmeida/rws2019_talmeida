@@ -3,10 +3,17 @@
 #include <ros/ros.h>
 #include <rws2019_msgs/MakeAPlay.h>
 #include <tf/transform_broadcaster.h>
+#include <tf/transform_listener.h>
 #include <vector>
 
 using namespace std; // ja na e preciso usar o std
 using namespace ros;
+
+float randomizePosition()
+{
+    srand(7956 * time(NULL)); // set initial seed value to 5323
+    return (((double)rand() / (RAND_MAX)) - 0.5) * 10;
+}
 
 namespace talmeida_ns // namespace talmeida_ns
 {
@@ -103,6 +110,7 @@ class MyPlayer : public Player // herda tudo da class player
     boost::shared_ptr<Team> team_preys;
     tf::TransformBroadcaster br;
     tf::Transform transform;
+    tf::TransformListener listener;
 
     MyPlayer(string player_name_in, string team_name_in)
         : Player(player_name_in) // construtor da class
@@ -137,7 +145,19 @@ class MyPlayer : public Player // herda tudo da class player
         {
             cout << "something wrong with team parametrization!!" << endl;
         }
-        // team_red->printInfo();
+
+        //define initial position
+        float sx = randomizePosition();
+        float sy = randomizePosition();
+        tf::Transform T1;
+        T1.setOrigin(tf::Vector3(sx, sy, 0.0));
+        tf::Quaternion q;
+        q.setRPY(0, 0, M_PI);
+        T1.setRotation(q);
+
+        //define global movement
+        tf::Transform Tglobal = T1;
+        br.sendTransform(tf::StampedTransform(Tglobal, ros::Time::now(), "world", player_name));
         printInfo();
     }
 
@@ -154,12 +174,34 @@ class MyPlayer : public Player // herda tudo da class player
     {
         ROS_INFO("received a new msg");
         //publicar uma transformacao:
-        tf::Transform transform1;
-        transform1.setOrigin(tf::Vector3(-1,3, 0.0));
+
+        //STEP 1: find out where I am
+        tf::StampedTransform T0;
+        try
+        {
+            listener.lookupTransform("/world", player_name,
+                                     ros::Time(0), T0); //ros::time(0)-extrapolacao
+        }
+        catch (tf::TransformException ex)
+        {
+            ROS_ERROR("%s", ex.what());
+            ros::Duration(0.1).sleep();
+        }
+
+        //STEP 2: define where I want to move
+        float dx = 0.5;
+        float angle = M_PI / 6;
+
+        //STEP 3: define local movment
+        tf::Transform T1;
+        T1.setOrigin(tf::Vector3(dx, 0.0, 0.0));
         tf::Quaternion q;
-        q.setRPY(0, 0, 0);
-        transform1.setRotation(q);
-        br.sendTransform(tf::StampedTransform(transform1,ros::Time::now(), "world", player_name));
+        q.setRPY(0, 0, angle);
+        T1.setRotation(q);
+
+        //STEP 4: define global movment
+        tf::Transform Tglobal = T0 * T1;
+        br.sendTransform(tf::StampedTransform(Tglobal, ros::Time::now(), "world", player_name));
     }
 
   private:
@@ -181,15 +223,17 @@ int main(int argc, char *argv[])
     // equipa
     ros::Subscriber sub = n.subscribe(
         "/make_a_play", 100, &talmeida_ns::MyPlayer::makeAPlayCallback, &player);
+
+    player.printInfo();
+    ros::Rate r(20);
     while (ros::ok())
     {
         // team_red.printInfo();
 
         // cout << "talmeida belongs to team?"
         //     << team_red.playerBelongsToTeam("talmeida") << endl;
-        ros::Duration(1).sleep();
-        player.printInfo();
         ros::spinOnce();
+        r.sleep();
     }
     return 1;
 }
