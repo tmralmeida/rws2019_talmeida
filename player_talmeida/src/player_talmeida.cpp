@@ -198,6 +198,8 @@ public:
     // STEP 2: define where I want to move
     vector<float> distance_to_preys;
     vector<float> angle_to_preys;
+    vector<float> distance_to_hunters;
+    vector<float> angle_to_hunters;
 
     // For each prey find the closest.Then follow it
     for (size_t i = 0; i < team_preys->player_names.size(); i++)
@@ -205,12 +207,16 @@ public:
       ROS_WARN_STREAM("team_preys = " << team_preys->player_names[i]);
 
       std::tuple<float, float> t = getDistanceAndAngleToPlayer(team_preys->player_names[i]);
+      std::tuple<float, float> t2 = getDistanceAndAngleToPlayer(team_hunters->player_names[i]);
       distance_to_preys.push_back(std::get<0>(t));
       angle_to_preys.push_back(std::get<1>(t));
+      distance_to_hunters.push_back(std::get<0>(t2));
+      angle_to_hunters.push_back(std::get<1>(t2));
     }
 
     int idx_closest_prey = 0;
     float distance_closest_prey = 1000;
+    float distance_closest_hunter = 0;
     for (size_t i = 0; i < distance_to_preys.size(); i++)
     {
       if (distance_to_preys[i] < distance_closest_prey)
@@ -218,6 +224,7 @@ public:
         idx_closest_prey = i;
         distance_closest_prey = distance_to_preys[i];
       }
+      
     }
 
     float dx = 10;
@@ -253,14 +260,15 @@ public:
     // marker.pose.orientation.x = 0.0;
     // marker.pose.orientation.y = 0.0;
     // marker.pose.orientation.z = 0.0;
-    // marker.pose.orientation.w = 1.0;
+    marker.pose.orientation.w = 1.0;
     // marker.scale.x = 1;
     // marker.scale.y = 0.1;
     marker.scale.z = 0.4;
     marker.color.a = 1.0;  // Don't forget to set the alpha!
-    marker.color.r = 1.0;
+    marker.color.r = 0.0;
     marker.color.g = 0.0;
     marker.color.b = 0.0;
+
     if (team_preys->player_names[idx_closest_prey] == "ttavares")
     {
       marker.text = "vou-te comer " + team_preys->player_names[idx_closest_prey];
