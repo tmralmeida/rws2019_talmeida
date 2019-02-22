@@ -159,7 +159,7 @@ class MyPlayer : public Player // herda tudo da class player
         tf::Quaternion q;
         q.setRPY(0, 0, 0);
         transform1.setRotation(q);
-        br.sendTransform(tf::StampedTransform(transform1 ros::Time::now(), "world", player_name));
+        br.sendTransform(tf::StampedTransform(transform1,ros::Time::now(), "world", player_name));
     }
 
   private:
