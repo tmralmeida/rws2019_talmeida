@@ -158,6 +158,8 @@ class MyPlayer : public Player // herda tudo da class player
         //define global movement
         tf::Transform Tglobal = T1;
         br.sendTransform(tf::StampedTransform(Tglobal, ros::Time::now(), "world", player_name));
+        ros::Duration(0.1).sleep();
+        br.sendTransform(tf::StampedTransform(Tglobal, ros::Time::now(), "world", player_name));
         printInfo();
     }
 
@@ -170,6 +172,7 @@ class MyPlayer : public Player // herda tudo da class player
                                         << " and fleeing from "
                                         << team_hunters->team_name);
     }
+    //Quando eu publico esta callback é chamada:
     void makeAPlayCallback(rws2019_msgs::MakeAPlayConstPtr msg)
     {
         ROS_INFO("received a new msg");
@@ -189,8 +192,15 @@ class MyPlayer : public Player // herda tudo da class player
         }
 
         //STEP 2: define where I want to move
-        float dx = 0.5;
-        float angle = M_PI / 6;
+        float dx = 0.1;
+        float angle = M_PI/16;
+
+        //STEP 2.5: check values
+        float dx_max=msg->cheetah;
+        dx>dx_max ? dx=dx_max : dx=dx; //operadores ternarios
+        double amax=M_PI/30;
+        fabs(angle)>fabs(amax) ? angle=amax*angle/fabs(angle) : angle=angle;
+
 
         //STEP 3: define local movment
         tf::Transform T1;
