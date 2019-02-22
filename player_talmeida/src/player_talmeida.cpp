@@ -12,7 +12,7 @@ using namespace ros;
 
 float randomizePosition()
 {
-  srand(7956 * time(NULL));  // set initial seed value to 5323
+  srand(153234 * time(NULL));  // set initial seed value to 5323
   return (((double)rand() / (RAND_MAX)) - 0.5) * 10;
 }
 
