@@ -128,7 +128,7 @@ public:
 
     ros::NodeHandle n;
     vis_pub = (boost::shared_ptr<ros::Publisher>)new ros::Publisher;
-    (*vis_pub) = n.advertise<visualization_msgs::Marker>("player_name", 0);
+    (*vis_pub) = n.advertise<visualization_msgs::Marker>("player_names", 0);
 
     if (team_red->playerBelongsToTeam(player_name_in))
     {
@@ -255,9 +255,9 @@ public:
 //       ROS_ERROR("%s", ex.what());
 //       ros::Duration(0.1).sleep();
 //     }
-  }
+  //}
 
-private:
+//private:
 };
 }  // namespace talmeida_ns
 
