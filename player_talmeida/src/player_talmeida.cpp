@@ -261,7 +261,7 @@ public:
     marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
     marker.action = visualization_msgs::Marker::ADD;
     // marker.pose.position.x = 1;
-    marker.pose.position.y = 0.6;
+    marker.pose.position.y = 0.5;
     // marker.pose.position.z = 1;
     // marker.pose.orientation.x = 0.0;
     // marker.pose.orientation.y = 0.0;
