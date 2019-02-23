@@ -58,6 +58,7 @@ public:
     return false;
   }
 };
+
 class Player
 {
 public:
