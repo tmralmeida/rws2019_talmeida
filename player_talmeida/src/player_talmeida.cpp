@@ -16,6 +16,12 @@ float randomizePosition()
   return (((double)rand() / (RAND_MAX)) - 0.5) * 10;
 }
 
+float randomizePosition2()
+{
+  srand(72323 * time(NULL));  // set initial seed value to 5323
+  return (((double)rand() / (RAND_MAX)) - 0.5) * 10;
+}
+
 namespace talmeida_ns  // namespace talmeida_ns
 {
 class Team
@@ -156,7 +162,7 @@ public:
 
     // define initial position
     float sx = randomizePosition();
-    float sy = randomizePosition();
+    float sy = randomizePosition2();
     tf::Transform T1;
     T1.setOrigin(tf::Vector3(sx, sy, 0.0));
     tf::Quaternion q;
@@ -224,7 +230,6 @@ public:
         idx_closest_prey = i;
         distance_closest_prey = distance_to_preys[i];
       }
-      
     }
 
     float dx = 10;
@@ -275,11 +280,11 @@ public:
     }
     else if (team_preys->player_names[idx_closest_prey] == "acastro")
     {
-      marker.text = "és um burro " + team_preys->player_names[idx_closest_prey];
+      marker.text = "es um burro " + team_preys->player_names[idx_closest_prey];
     }
     else
     {
-      marker.text = "já foste " + team_preys->player_names[idx_closest_prey];
+      marker.text = "ja foste " + team_preys->player_names[idx_closest_prey];
     }
 
     // only if using a MESH_RESOURCE marker type:
