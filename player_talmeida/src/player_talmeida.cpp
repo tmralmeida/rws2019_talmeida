@@ -277,7 +277,14 @@ public:
     }
     else
     {
-      angle = angle_to_preys[idx_closest_prey];
+      if (distance_closest_hunter < 2)
+      {
+        angle = -angle_to_hunters[idx_closest_hunter];
+      }
+      else
+      {
+        angle = angle_to_preys[idx_closest_prey];
+      }
     }
 
     // STEP 2.5: check values
