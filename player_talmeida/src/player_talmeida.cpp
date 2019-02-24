@@ -7,28 +7,28 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;  // ja na e preciso usar o std
+using namespace std; // ja na e preciso usar o std
 using namespace ros;
 
 float randomizePosition()
 {
-  srand(153234 * time(NULL));  // set initial seed value to 5323
+  srand(153234 * time(NULL)); // set initial seed value to 5323
   return (((double)rand() / (RAND_MAX)) - 0.5) * 10;
 }
 
 float randomizePosition2()
 {
-  srand(72323 * time(NULL));  // set initial seed value to 5323
+  srand(72323 * time(NULL)); // set initial seed value to 5323
   return (((double)rand() / (RAND_MAX)) - 0.5) * 10;
 }
 
-namespace talmeida_ns  // namespace talmeida_ns
+namespace talmeida_ns // namespace talmeida_ns
 {
 class Team
 {
 public:
   string team_name;
-  vector<string> player_names;  // lista
+  vector<string> player_names; // lista
   ros::NodeHandle n;
   Team(string team_name_in)
   {
@@ -107,10 +107,10 @@ public:
   };
 
 private:
-  string team_name;  // assim nao da para mudar
+  string team_name; // assim nao da para mudar
 };
 
-class MyPlayer : public Player  // herda tudo da class player
+class MyPlayer : public Player // herda tudo da class player
 {
 public:
   // ponteiros para classes especiais teams
@@ -126,10 +126,10 @@ public:
   tf::TransformListener listener;
   boost::shared_ptr<ros::Publisher> vis_pub;
 
-  MyPlayer(string player_name_in, string team_name_in) : Player(player_name_in)  // construtor da class
+  MyPlayer(string player_name_in, string team_name_in) : Player(player_name_in) // construtor da class
   {
     setTeamName(team_name_in);
-    team_red = (boost::shared_ptr<Team>)new Team("red");  // mallock
+    team_red = (boost::shared_ptr<Team>)new Team("red"); // mallock
     team_green = (boost::shared_ptr<Team>)new Team("green");
     team_blue = (boost::shared_ptr<Team>)new Team("blue");
 
@@ -194,7 +194,7 @@ public:
     tf::StampedTransform T0;
     try
     {
-      listener.lookupTransform("/world", player_name, ros::Time(0), T0);  // ros::time(0)-extrapolacao
+      listener.lookupTransform("/world", player_name, ros::Time(0), T0); // ros::time(0)-extrapolacao
     }
     catch (tf::TransformException ex)
     {
@@ -208,7 +208,8 @@ public:
     vector<float> distance_to_hunters;
     vector<float> angle_to_hunters;
 
-    // For each prey find the closest.Then follow it
+//For each prey find the closest.Then follow it
+#if 1
     for (size_t i = 0; i < team_preys->player_names.size(); i++)
     {
       ROS_WARN_STREAM("team_preys = " << team_preys->player_names[i]);
@@ -222,8 +223,9 @@ public:
     }
 
     int idx_closest_prey = 0;
+    int idx_closest_hunter = 0;
     float distance_closest_prey = 1000;
-    float distance_closest_hunter = 0;
+    float distance_closest_hunter = 1000;
     for (size_t i = 0; i < distance_to_preys.size(); i++)
     {
       if (distance_to_preys[i] < distance_closest_prey)
@@ -233,12 +235,54 @@ public:
       }
     }
 
+    for (size_t ii = 0; ii < distance_to_hunters.size(); ii++)
+    {
+      if (distance_to_hunters[ii] < distance_closest_hunter)
+      {
+        idx_closest_hunter = ii;
+        distance_closest_hunter = distance_to_hunters[ii];
+      }
+    }
+#endif
+#if 0
+
+    for (size_t i = 0; i < msg->green_alive.size(); i++)
+    {
+      std::tuple<float, float> t = getDistanceAndAngleToPlayer(msg->green_alive[i]);
+      std::tuple<float, float> t2 = getDistanceAndAngleToPlayer(msg->red_alive[i]);
+      distance_to_preys.push_back(std::get<0>(t));
+      angle_to_preys.push_back(std::get<1>(t));
+      distance_to_hunters.push_back(std::get<0>(t2));
+      angle_to_hunters.push_back(std::get<1>(t2));
+
+      if (isnan(distance_to_preys[i]))
+      {
+      }
+      else
+      {
+        distance_closest_prey = distance_to_preys[i];
+        idx_closest_prey = i;
+      }
+    }
+#endif
+    std::tuple<float, float> t_world = getDistanceAndAngleToPlayer("world");
+    float distance_to_world = (std::get<0>(t_world));
+    float angle_to_world = (std::get<1>(t_world));
     float dx = 10;
-    float angle = angle_to_preys[idx_closest_prey];
+    float angle;
+
+    if ((distance_to_world) > 7.8)
+    {
+      angle = angle_to_world + M_PI / 2;
+    }
+    else
+    {
+      angle = angle_to_preys[idx_closest_prey];
+    }
 
     // STEP 2.5: check values
     float dx_max = msg->cheetah;
-    dx > dx_max ? dx = dx_max : dx = dx;  // operadores ternarios
+    dx > dx_max ? dx = dx_max : dx = dx; // operadores ternarios
     double amax = M_PI / 30;
     fabs(angle) > fabs(amax) ? angle = amax * angle / fabs(angle) : angle = angle;
 
@@ -260,17 +304,10 @@ public:
     marker.id = 0;
     marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
     marker.action = visualization_msgs::Marker::ADD;
-    // marker.pose.position.x = 1;
-    marker.pose.position.y = 0.5;
-    // marker.pose.position.z = 1;
-    // marker.pose.orientation.x = 0.0;
-    // marker.pose.orientation.y = 0.0;
-    // marker.pose.orientation.z = 0.0;
     marker.pose.orientation.w = 1.0;
-    // marker.scale.x = 1;
-    // marker.scale.y = 0.1;
-    marker.scale.z = 0.4;
-    marker.color.a = 1.0;  // Don't forget to set the alpha!
+    marker.pose.position.y = 0.4;
+    marker.scale.z = 0.3;
+    marker.color.a = 1.0; // Don't forget to set the alpha!
     marker.color.r = 0.0;
     marker.color.g = 0.0;
     marker.color.b = 0.0;
@@ -308,16 +345,16 @@ public:
     catch (tf::TransformException ex)
     {
       ROS_ERROR("%s", ex.what());
-      return { 1000, 0.0 };
+      return {1000, 0.0};
     }
     float distance = sqrt(T.getOrigin().y() * T.getOrigin().y() + T.getOrigin().x() * T.getOrigin().x());
     float angle = atan2(T.getOrigin().y(), T.getOrigin().x());
-    return { distance, angle };
+    return {distance, angle};
   }
 
 private:
 };
-}  // namespace talmeida_ns
+} // namespace talmeida_ns
 
 int main(int argc, char *argv[])
 {
