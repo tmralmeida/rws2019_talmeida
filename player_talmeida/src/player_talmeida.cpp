@@ -390,7 +390,6 @@ int main(int argc, char *argv[])
   ros::init(argc, argv, "talmeida");
   ros::NodeHandle n;
 
-
   talmeida_ns::MyPlayer player("talmeida", "red");
   // Player player("talmeida");
   // player.setTeamName(0); // ou "red"
