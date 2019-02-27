@@ -267,42 +267,42 @@ public:
     br.sendTransform(
         tf::StampedTransform(Tglobal, ros::Time::now(), "world", player_name));
 
-    if (something_changed == true) 
-    {
-      visualization_msgs::Marker marker;
-      marker.header.frame_id = player_name;
-      marker.header.stamp = ros::Time();
-      marker.ns = player_name;
-      marker.id = 0;
-      marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
-      marker.action = visualization_msgs::Marker::ADD;
-      //marker.pose.orientation.w = 1.0;
-      marker.pose.position.y = 0.5;
-      marker.lifetime = ros::Duration(2);
-      marker.frame_locked=1;
-      marker.scale.z = 0.4;
-      marker.color.a = 1.0; // Don't forget to set the alpha!
-      marker.color.r = 0.0;
-      marker.color.g = 0.0;
-      marker.color.b = 0.0;
+    // if (something_changed == true) 
+    // {
+    //   visualization_msgs::Marker marker;
+    //   marker.header.frame_id = player_name;
+    //   marker.header.stamp = ros::Time();
+    //   marker.ns = player_name;
+    //   marker.id = 0;
+    //   marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+    //   marker.action = visualization_msgs::Marker::ADD;
+    //   //marker.pose.orientation.w = 1.0;
+    //   marker.pose.position.y = 0.5;
+    //   marker.lifetime = ros::Duration(2);
+    //   //marker.frame_locked=1;
+    //   marker.scale.z = 0.4;
+    //   marker.color.a = 1.0; // Don't forget to set the alpha!
+    //   marker.color.r = 0.0;
+    //   marker.color.g = 0.0;
+    //   marker.color.b = 0.0;
 
-      if (team_preys->player_names[idx_closest_prey] == "ttavares") 
-      {
-        marker.text ="vou-te comer " + team_preys->player_names[idx_closest_prey];
-      } 
-      else if (team_preys->player_names[idx_closest_prey] == "acastro") 
-      {
-        marker.text ="es um burro " + team_preys->player_names[idx_closest_prey];
-      } else 
-      {
-        marker.text = "ja foste " + team_preys->player_names[idx_closest_prey];
-      }
+    //   if (team_preys->player_names[idx_closest_prey] == "ttavares") 
+    //   {
+    //     marker.text ="vou-te comer " + team_preys->player_names[idx_closest_prey];
+    //   } 
+    //   else if (team_preys->player_names[idx_closest_prey] == "acastro") 
+    //   {
+    //     marker.text ="es um burro " + team_preys->player_names[idx_closest_prey];
+    //   } else 
+    //   {
+    //     marker.text = "ja foste " + team_preys->player_names[idx_closest_prey];
+    //   }
 
-      // only if using a MESH_RESOURCE marker type:
-      // marker.mesh_resource =
-      // "package://pr2_description/meshes/base_v0/base.dae";
-      vis_pub->publish(marker);
-    }
+    //   // only if using a MESH_RESOURCE marker type:
+    //   // marker.mesh_resource =
+    //   // "package://pr2_description/meshes/base_v0/base.dae";
+    //   vis_pub->publish(marker);
+    // }
   }
 
   tuple<float, float> getDistanceToArenaCenter(string other_player) {
