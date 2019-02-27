@@ -167,7 +167,7 @@ public:
   }
   // Quando eu publico esta callback é chamada:
   void makeAPlayCallback(rws2019_msgs::MakeAPlayConstPtr msg) {
-    bool something_changed=false;
+    bool something_changed = false;
     ROS_INFO("received a new msg");
     // publicar uma transformacao:
 
@@ -187,7 +187,7 @@ public:
     vector<float> distance_to_hunters;
     vector<float> angle_to_hunters;
 
-// For each prey find the closest.Then follow it
+    // For each prey find the closest.Then follow it
 
     for (size_t i = 0; i < team_preys->player_names.size(); i++) {
       ROS_WARN_STREAM("team_preys = " << team_preys->player_names[i]);
@@ -225,17 +225,19 @@ public:
     float angle_to_world = (std::get<1>(t_world));
     float dx = 10;
     float angle;
-    string prey="";
+    string prey = "";
     if ((distance_to_world) > 7.8) {
       angle = angle_to_world + M_PI / 2;
     } else {
       if (distance_closest_hunter < 2 && idx_closest_prey == -1) {
         angle = -angle_to_hunters[idx_closest_hunter];
       } else if (idx_closest_prey != -1) {
-        prey=team_preys->player_names[idx_closest_prey];
-        if (prey!=last_prey)
-        something_changed=true;
-        last_prey=prey;
+        prey = team_preys->player_names[idx_closest_prey];
+        if (prey != last_prey) {
+          
+          something_changed = true;
+          last_prey=prey;
+        }
         angle = angle_to_preys[idx_closest_prey];
       }
     }
@@ -259,7 +261,8 @@ public:
     br.sendTransform(
         tf::StampedTransform(Tglobal, ros::Time::now(), "world", player_name));
 
-    if (something_changed == true) {
+    if (something_changed == true) 
+    {
       visualization_msgs::Marker marker;
       marker.header.frame_id = player_name;
       marker.header.stamp = ros::Time();
@@ -267,22 +270,25 @@ public:
       marker.id = 0;
       marker.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
       marker.action = visualization_msgs::Marker::ADD;
-      marker.pose.orientation.w = 1.0;
-      marker.pose.position.y = 0.4;
-      marker.scale.z = 0.3;
-      marker.lifetime=ros::Duration(2);
+      //marker.pose.orientation.w = 1.0;
+      marker.pose.position.y = 0.5;
+      marker.lifetime = ros::Duration(2);
+      marker.frame_locked=1;
+      marker.scale.z = 0.4;
       marker.color.a = 1.0; // Don't forget to set the alpha!
       marker.color.r = 0.0;
       marker.color.g = 0.0;
       marker.color.b = 0.0;
 
-      if (team_preys->player_names[idx_closest_prey] == "ttavares") {
-        marker.text =
-            "vou-te comer " + team_preys->player_names[idx_closest_prey];
-      } else if (team_preys->player_names[idx_closest_prey] == "acastro") {
-        marker.text =
-            "es um burro " + team_preys->player_names[idx_closest_prey];
-      } else {
+      if (team_preys->player_names[idx_closest_prey] == "ttavares") 
+      {
+        marker.text ="vou-te comer " + team_preys->player_names[idx_closest_prey];
+      } 
+      else if (team_preys->player_names[idx_closest_prey] == "acastro") 
+      {
+        marker.text ="es um burro " + team_preys->player_names[idx_closest_prey];
+      } else 
+      {
         marker.text = "ja foste " + team_preys->player_names[idx_closest_prey];
       }
 
