@@ -226,14 +226,20 @@ public:
     float dx = 10;
     float angle;
     string prey = "";
-    if ((distance_to_world) > 7.8) {
+    if ((distance_to_world) > 7.8) 
+    {
       angle = angle_to_world + M_PI / 2;
-    } else {
-      if (distance_closest_hunter < 2 && idx_closest_prey == -1) {
+    } else 
+    {
+      if (distance_closest_hunter < 2 && idx_closest_prey == -1) 
+      {
         angle = -angle_to_hunters[idx_closest_hunter];
-      } else if (idx_closest_prey != -1) {
+      } 
+      else if (idx_closest_prey != -1) 
+      {
         prey = team_preys->player_names[idx_closest_prey];
-        if (prey != last_prey) {
+        if (prey != last_prey) 
+        {
           
           something_changed = true;
           last_prey=prey;
