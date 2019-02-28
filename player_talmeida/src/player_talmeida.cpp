@@ -380,9 +380,22 @@ public:
     float angle = atan2(T.getOrigin().y(), T.getOrigin().x());
     return {distance, angle};
   }
-  bool add(rws2019_msgs::DoTheMath::Request &req,rws2019_msgs::DoTheMath::Response &res)
+  bool add(rws2019_msgs::DoTheMath::Request &req, rws2019_msgs::DoTheMath::Response &res)
   {
-    res.result = req.a + req.b;
+    if (req.op == "+")
+      res.result = req.a + req.b;
+    else if (req.op == "-")
+      res.result = req.a - req.b;
+    else if (req.op == "*")
+      res.result = req.a * req.b;
+    else if (req.op == "/")
+      res.result = req.a / req.b;
+      // if (req.b==0)
+      // {
+      //   res.result=10000000;
+      // }
+    else
+      return false;
     ROS_INFO("request: x=%ld, y=%ld", (long int)req.a, (long int)req.b);
     ROS_INFO("sending back response: [%ld]", (long int)res.result);
     return true;
@@ -406,7 +419,7 @@ int main(int argc, char *argv[])
   // team_red.player_names.push_back("talmeida"); // acrescenat elementos a
   // equipa
   ros::Subscriber sub = n.subscribe("/make_a_play", 100, &talmeida_ns::MyPlayer::makeAPlayCallback, &player);
-  ros::ServiceServer service = n.advertiseService("do_the_math", &talmeida_ns::MyPlayer::add,&player);
+  ros::ServiceServer service = n.advertiseService("do_the_math", &talmeida_ns::MyPlayer::add, &player);
   //ros::Subscriber pcl_sub = n.subscribe("/object_point_cloud", 1, &talmeida_ns::MyPlayer::PCL_callback, &player);
 
   player.printInfo();
@@ -422,4 +435,3 @@ int main(int argc, char *argv[])
   }
   return 1;
 }
-
