@@ -24,7 +24,7 @@ float randomizePosition2()
   return (((double)rand() / (RAND_MAX)) - 0.5) * 10;
 }
 
-typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
+//typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
 
 namespace talmeida_ns // namespace talmeida_ns
 {
