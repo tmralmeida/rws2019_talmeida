@@ -198,12 +198,12 @@ public:
   }
 
   // callback da point cloud
-  void PCL_callback(const PointCloud::ConstPtr &msg)
-  {
-    printf("Cloud: width = %d, height = %d\n", msg->width, msg->height);
-    BOOST_FOREACH (const pcl::PointXYZ &pt, msg->points)
-      printf("\t(%f, %f, %f)\n", pt.x, pt.y, pt.z);
-  }
+  // void PCL_callback(const PointCloud::ConstPtr &msg)
+  // {
+  //   printf("Cloud: width = %d, height = %d\n", msg->width, msg->height);
+  //   BOOST_FOREACH (const pcl::PointXYZ &pt, msg->points)
+  //     printf("\t(%f, %f, %f)\n", pt.x, pt.y, pt.z);
+  // }
 
   // Quando eu publico esta callback é chamada:
   void makeAPlayCallback(rws2019_msgs::MakeAPlayConstPtr msg)
@@ -216,12 +216,11 @@ public:
     tf::StampedTransform T0;
     try
     {
-      listener.lookupTransform("/world", player_name, ros::Time(0),
-                               T0); // ros::time(0)-extrapolacao
+      listener.lookupTransform("/world", player_name, ros::Time(0), T0); // ros::time(0)-extrapolacao
     }
     catch (tf::TransformException ex)
     {
-      ROS_ERROR("%s", ex.what());
+      //ROS_ERROR("%s", ex.what());
       ros::Duration(0.1).sleep();
     }
 
@@ -372,7 +371,7 @@ public:
     }
     catch (tf::TransformException ex)
     {
-      ROS_ERROR("%s", ex.what());
+      //ROS_ERROR("%s", ex.what());
       return {1000, 0.0};
     }
     float distance = sqrt(T.getOrigin().y() * T.getOrigin().y() +
@@ -399,7 +398,7 @@ int main(int argc, char *argv[])
   // team_red.player_names.push_back("talmeida"); // acrescenat elementos a
   // equipa
   ros::Subscriber sub = n.subscribe("/make_a_play", 100, &talmeida_ns::MyPlayer::makeAPlayCallback, &player);
-  ros::Subscriber pcl_sub = n.subscribe("/object_point_cloud", 1, &talmeida_ns::MyPlayer::PCL_callback, &player);
+  //ros::Subscriber pcl_sub = n.subscribe("/object_point_cloud", 1, &talmeida_ns::MyPlayer::PCL_callback, &player);
 
   player.printInfo();
   ros::Rate r(20);
